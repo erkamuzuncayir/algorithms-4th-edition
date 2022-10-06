@@ -97,6 +97,7 @@ public class BinarySearch {
         // sort the array
         Arrays.sort(allowlist);
 
+	//
         // read integer key from standard input; print if not in allowlist
         while (!StdIn.isEmpty()) {
             int key = StdIn.readInt();
