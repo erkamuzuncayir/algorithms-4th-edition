@@ -26,9 +26,7 @@ public class Exercise_1_32
 				continue;
 
 			if( a[ i ] <= intervalTraverseValue )
-			{
 				objectCountOfInterval++; 
-			}
 			else if( a[ i ] <= intervalTraverseValue + interval )
 			{
 				intervalCount++;
@@ -45,5 +43,4 @@ public class Exercise_1_32
 			}
 		}
 	}
-
 }
