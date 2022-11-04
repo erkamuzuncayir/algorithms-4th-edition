@@ -1,10 +1,10 @@
 // Chapter 1 - Exercise 1.2.3
 
 import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.Interval1D;
-import edu.princeton.cs.algs4.Interval2D;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdRandom;
+import edu.princeton.cs.algs4.Interval1D;
+import edu.princeton.cs.algs4.Interval2D;
 
 public class Exercise_3
 {
@@ -15,37 +15,31 @@ public class Exercise_3
 		double maxValue = Double.parseDouble( args[ 2 ] ); 		
 		
 		Interval2D[] interval_array = new Interval2D[ count ];	
-	
-		CreateAndDrawRectangles( interval_array , minValue , maxValue );
-/*
-		double shortestDistance = CalculateShortestDistance( points );
-		StdOut.printf( "The shortest distance between two point is %.3f" , shortestDistance );
-*/
+		Interval1D[] interval_width_array = new Interval1D[ count ];
+		Interval1D[] interval_height_array = new Interval1D[ count ];
+		
+		CreateAndDrawRectangles( interval_array , interval_width_array , interval_height_array , minValue , maxValue );
+		DetectAndPrintIntersectAndContainCount( interval_array , interval_width_array , interval_height_array );
 	}
 	
-	private static void CreateAndDrawRectangles( Interval2D[] interval_array , double min , double max )
+	private static void CreateAndDrawRectangles( Interval2D[] interval_array , Interval1D[] interval_width_array , Interval1D[] interval_height_array, double min , double max )
 	{
 		
 		double canvasMaxValue = max * 2;
 		StdDraw.setPenRadius( .005 );
-		StdDraw.setScale( 0 , max* 2 );
+		StdDraw.setScale( 0 , max * 2 );
 		
 		for( int i = 0; i < interval_array.length; i++ )
 		{
 			Interval1D width = GenerateInterval2D( min , max );
 			Interval1D height = GenerateInterval2D( min , max );
-			double halfWidth = width.length() / 2;
-			double halfHeight = height.length() / 2;
-			
 			Interval2D rectangle = new Interval2D( width , height );
-			rectangle.draw();
-		/*			
-		*	double randomPointX = StdRandom.uniformDouble( halfWidth , canvasMaxValue - halfWidth );
-		*	double randomPointY = StdRandom.uniformDouble( halfHeight , canvasMaxValue - halfHeight );
-		*	
-		*	
-		*	StdDraw.rectangle( 2 , 2 , halfWidth , halfHeight ); */
 			
+			interval_width_array[ i ] = width;
+			interval_height_array[ i ] = height;
+			interval_array[ i ] = rectangle;
+			
+			rectangle.draw();
 		}
 	}
 	
@@ -63,22 +57,35 @@ public class Exercise_3
 		
 		return new Interval1D( smallOne , bigOne );
 	}
-	/*
-	private static double CalculateShortestDistance( Point2D[] points )
+	
+	private static void DetectAndPrintIntersectAndContainCount( Interval2D[] interval_array , Interval1D[] interval_width_array , Interval1D[] interval_height_array )
 	{
-		double shortestDistance = points[ 0 ].distanceTo( points[ 1 ] );
-		double distanceBetweenTwoPoint = shortestDistance;
-		for( int i = 0; i < points.length - 1; i++ )
+		int intersectCount = 0;
+		int containCount = 0;
+		for( int i = 0 ; i < interval_array.length - 1 ; i++ )
 		{
-			for( int j = i + 1; j < points.length; j++ )
+			for( int j = i + 1 ; j < interval_array.length ; j++ )
 			{
-				distanceBetweenTwoPoint = points[ i ].distanceTo( points[ j ] );
-				
-				if( distanceBetweenTwoPoint < shortestDistance )
-					shortestDistance = distanceBetweenTwoPoint; 
+
+				if( interval_array[ i ].intersects( interval_array[ j ] ) )
+				{
+					intersectCount++;
+					if( ( ( interval_width_array[ i ].min() < interval_width_array[ j ].min() && 
+							interval_width_array[ i ].max() > interval_width_array[ j ].max() ) && 
+							( interval_height_array[ i ].min() < interval_height_array[ j ].min() && 
+							interval_height_array[ i ].max() > interval_height_array[ j ].max() ) ) || 
+						( ( interval_width_array[ i ].min() > interval_width_array[ j ].min() && 
+							interval_width_array[ i ].max() < interval_width_array[ j ].max() ) && 
+							( interval_height_array[ i ].min() > interval_height_array[ j ].min() && 
+							interval_height_array[ i ].max() < interval_height_array[ j ].max() ) ) )
+					{
+						containCount++;
+						intersectCount--;
+					}					
+				}
 			}
 		}
 		
-		return shortestDistance;
-	}*/
+		StdOut.printf( "There are %d contains and %d intersects.\n" , containCount , intersectCount );
+	}
 }
